@@ -1,10 +1,10 @@
 version: '3.8'
 
 services:
-  php:
+  workspace:
     build: ./docker
     tty: true
-    container_name: php
+    container_name: workspace-php
     volumes:
       - ./:/var/www
     working_dir: /var/www
