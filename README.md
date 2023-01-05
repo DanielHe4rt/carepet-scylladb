@@ -2,13 +2,22 @@
 
 This example project demonstrates a generic IoT use case for ScyllaDB in PHP.
 
+Here you will find a list with possible drivers to integrate.
+
+| PHP Version | Driver                                                                         |
+|-------------|--------------------------------------------------------------------------------|
+| PHP 7.1 [x] | [DataStax PHP Driver](https://github.com/datastax/php-driver)                  |
+| PHP 8.1     | [Cassandra PHP Driver (dev)](https://github.com/qkdreyer/cassandra-php-driver) |
+
 The documentation for this application and guided exercise is [here](../docs).
 
-The application allows tracking of pets health indicators and consist of three parts:
+The application allows tracking of pets health indicators and consist in a CLI of three parts:
 
-- migrate (`php scylla migrate`) - creates the `carepet` keyspace and tables
-- collar (`php scylla seed`) - generates a pet health data and pushes it into the storage
-- web app (`php scylla serve`) - REST API service for tracking pets health state
+| Command             | Description                                                |
+|---------------------|------------------------------------------------------------|
+| php scylla migrate  | creates the `carepet` keyspace and tables                  |
+| php scylla simulate | generates a pet health data and pushes it into the storage |
+| php scylla serve    | REST API service for tracking pets health state            |
 
 ## Quick Start
 
@@ -17,10 +26,14 @@ Prerequisites:
 - [docker](https://www.docker.com/)
 - [docker-compose](https://docs.docker.com/compose/)
 
+## Setup
+
 To run a local **ScyllaDB cluster** consisting of three nodes and the **PHP Workspace** with
 the help of `docker` and `docker-compose` execute:
 
-    $ docker-compose up -d
+````shell
+$ docker-compose up -d
+````    
 
 Docker-compose will spin up three nodes which is:
 
@@ -28,10 +41,61 @@ Docker-compose will spin up three nodes which is:
 - carepet-scylla2
 - carepet-scylla3
 
+If you want to see your containers running, run the `docker ps` command, and you should see something like this:
+
+`````shell
+$ docker ps
+CONTAINER ID   IMAGE                    COMMAND                  CREATED       STATUS       PORTS                                                                      NAMES
+14a656685517   care-pet-php-workspace   "/bin/sh -c /bin/bas…"   1 minute ago   Up 1 minute   9000/tcp                                                                   workspace-php
+4e351dfe3987   scylladb/scylla          "/docker-entrypoint.…"   1 minute ago   Up 1 minute   22/tcp, 7000-7001/tcp, 7199/tcp, 9042/tcp, 9160/tcp, 9180/tcp, 10000/tcp   carepet-scylla2
+9e7e4d3992df   scylladb/scylla          "/docker-entrypoint.…"   1 minute ago   Up 1 minute   22/tcp, 7000-7001/tcp, 7199/tcp, 9042/tcp, 9160/tcp, 9180/tcp, 10000/tcp   carepet-scylla3
+7e2b1b94389b   scylladb/scylla          "/docker-entrypoint.…"   1 minute ago   Up 1 minute   22/tcp, 7000-7001/tcp, 7199/tcp, 9042/tcp, 9160/tcp, 9180/tcp, 10000/tcp   carepet-scylla1
+`````
+
+> If you have any error regarding "premature connection", restart your docker instance and wait a minute until
+> your ScyllaDB connection be established. 
+
 ... and also will create the **php-workspace**, where your web server will run. You can access them with the `docker`
 command.
 
 ### Useful Commands
+
+Here's a list of everything that you can execute and make your own research through the application.
+
+#### PHP Application Commands
+
+These commands you can execute by `entering the container` or through `docker exec` remotely:
+
+
+##### Entering App Container:
+````shell
+$ docker exec -it workspace-php php scylla bash
+root@14a656685517:/var/www# 
+root@14a656685517:/var/www# php scylla help
+````
+
+##### Initializing Database:
+````shell
+$ docker exec -it workspace-php php scylla migrate
+[INFO] Fetching Migrations... 
+[INFO] Migrated: /var/www/migrations/1-create_keyspace.cql 
+[INFO] Migrated: /var/www/migrations/2-create_owner_table.cql 
+[INFO] Migrated: /var/www/migrations/3-create_pets_table.cql 
+[INFO] Migrated: /var/www/migrations/4-create_sensors_table.cql 
+[INFO] Migrated: /var/www/migrations/5-create_measurements_table.cql 
+[INFO] Migrated: /var/www/migrations/6-create_sensor_avg_table.cql 
+[INFO] Done :D 
+````
+
+##### Starting Web Server:
+````shell
+$ php scylla serve
+[INFO] CarePet Web started!
+[INFO] Development Server: http://0.0.0.0:8000
+[Thu Jan  5 17:32:01 2023] PHP 7.4.33 Development Server (http://0.0.0.0:8000) started
+````
+
+### ScyllaDB Commands
 
 To execute CQLSH:
 
@@ -46,9 +110,11 @@ $ docker exec -it carepet-scylla1 nodetool status
 `````
 
 Shell:
+
 ````shell
 $ docker exec -it carepet-scylla1 shell
 ````
+
 You can inspect any node by means of the `docker inspect` command as follows. For example:
 
 ````shell
@@ -56,26 +122,11 @@ $ docker inspect carepet-scylla1
 ````
 
 To get node IP address run:
+
 ````shell
 $ docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' carepet-scylla1
 ````
 
-To initialize database execute:
-````shell
-$ docker exec -it workspace-php php scylla migrate
-````
-
-Expected output:
-````log
-[INFO] Fetching Migrations... 
-[INFO] Migrated: /var/www/migrations/1-create_keyspace.cql 
-[INFO] Migrated: /var/www/migrations/2-create_owner_table.cql 
-[INFO] Migrated: /var/www/migrations/3-create_pets_table.cql 
-[INFO] Migrated: /var/www/migrations/4-create_sensors_table.cql 
-[INFO] Migrated: /var/www/migrations/5-create_measurements_table.cql 
-[INFO] Migrated: /var/www/migrations/6-create_sensor_avg_table.cql 
-[INFO] Done :D 
-````
 
 You can check the database structure with:
 
@@ -85,15 +136,18 @@ $ docker exec -it carepet-scylla1 cqlsh
 
 ````sql
 
-cqlsh> DESCRIBE KEYSPACES
+cqlsh
+> DESCRIBE KEYSPACES
 carepet  system_schema  system_auth  system  system_distributed  system_traces
 
 cqlsh> USE carepet;
-cqlsh:carepet> DESCRIBE TABLES
+cqlsh
+:carepet> DESCRIBE TABLES
 pet  sensor_avg  gocqlx_migrate  measurement  owner  sensor
 
 cqlsh:carepet> DESCRIBE TABLE pet
-CREATE TABLE carepet.pet (
+CREATE TABLE carepet.pet
+(
     owner_id uuid,
     pet_id   uuid,
     chip_id  text,
@@ -102,9 +156,9 @@ CREATE TABLE carepet.pet (
     color    text,
     gender   text,
     address  text,
-    age int,
-    name text,
-    weight float,
+    age      int,
+    name     text,
+    weight   float,
     PRIMARY KEY (owner_id, pet_id)
 ) WITH CLUSTERING ORDER BY (pet_id ASC)
     AND bloom_filter_fp_chance = 0.01
@@ -122,9 +176,9 @@ CREATE TABLE carepet.pet (
     AND read_repair_chance = 0.0
     AND speculative_retry = '99.0PERCENTILE';
 
-cqlsh:carepet> exit
+cqlsh
+:carepet> exit
 ````
-    
 
 To start pet collar simulation execute the following in the separate terminal:
 

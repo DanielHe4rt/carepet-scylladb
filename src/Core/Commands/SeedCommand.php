@@ -22,7 +22,8 @@ class SeedCommand extends AbstractCommand
         $petRepository = new PetRepository();
         $sensorRepository = new SensorRepository();
 
-        for ($i = 0; $i <= self::AMOUNT_BASE; $i++) {
+        foreach (range(0, self::AMOUNT_BASE) as $i) {
+            $this->info("Batch: " . $i);
             $ownerDTO = OwnerFactory::make();
             $petDTO = PetFactory::make(['owner_id' => $ownerDTO->id]);
             $sensorDTOs = SensorFactory::makeMany(5, [
