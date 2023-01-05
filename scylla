@@ -1,7 +1,7 @@
 <?php
 
-use App\Commands\CommandException;
-use App\Commands\ServeCommand;
+use App\Core\Commands\CommandException;
+use App\Core\Commands\ServeCommand;
 
 require_once 'vendor/autoload.php';
 
@@ -10,7 +10,7 @@ if(count($argv) <= 1) {
     return;
 }
 
-function getCommand($command): \App\Commands\AbstractCommand
+function getCommand($command): \App\Core\Commands\AbstractCommand
 {
     switch($command) {
         case 'serve':

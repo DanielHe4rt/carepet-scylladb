@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Commands;
+namespace App\Core\Commands;
 
 class ServeCommand extends AbstractCommand
 {

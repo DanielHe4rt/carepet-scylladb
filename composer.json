@@ -13,5 +13,7 @@
             "email": "hey@danielheart.dev"
         }
     ],
-    "require": {}
+    "require": {
+        "sunrise/http-router": "^2.15"
+    }
 }

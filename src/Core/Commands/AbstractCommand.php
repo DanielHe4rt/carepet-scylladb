@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Commands;
+namespace App\Core\Commands;
 
 abstract class AbstractCommand implements CommandInterface
 {
