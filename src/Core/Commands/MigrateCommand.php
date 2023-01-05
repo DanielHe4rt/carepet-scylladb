@@ -2,6 +2,7 @@
 
 namespace App\Core\Commands;
 
+use App\Core\Commands\Base\AbstractCommand;
 use App\Core\Database\Connector;
 
 class MigrateCommand extends AbstractCommand

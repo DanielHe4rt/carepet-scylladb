@@ -40,7 +40,7 @@ abstract class AbstractRepository
             ->get(5);
     }
 
-    public function create(AbstractDTO $dto): Rows
+    public function create(AbstractDTO $dto): array
     {
         $keys = array_keys($dto->toDatabase());
         $dataValues = array_values($dto->toDatabase());
@@ -60,9 +60,11 @@ abstract class AbstractRepository
         );
 
 
-        return $this->connection
+        $result = $this->connection
             ->prepare($query)
             ->execute()
             ->get(5);
+
+        return $result->first();
     }
 }

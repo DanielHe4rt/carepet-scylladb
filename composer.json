@@ -17,6 +17,7 @@
         }
     ],
     "require": {
-        "sunrise/http-router": "^2.15"
+        "sunrise/http-router": "^2.15",
+        "fakerphp/faker": "^1.20"
     }
 }

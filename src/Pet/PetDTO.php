@@ -48,8 +48,6 @@ class PetDTO extends AbstractDTO
 
     public static function make(array $payload): self
     {
-        var_dump($payload);
-
         return new self(
             $payload['owner_id'],
             $payload['chip_id'],

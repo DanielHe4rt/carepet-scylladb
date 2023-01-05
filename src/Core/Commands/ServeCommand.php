@@ -2,6 +2,8 @@
 
 namespace App\Core\Commands;
 
+use App\Core\Commands\Base\AbstractCommand;
+
 class ServeCommand extends AbstractCommand
 {
 

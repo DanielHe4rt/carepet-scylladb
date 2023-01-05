@@ -14,7 +14,13 @@ $petRepository = new PetRepository();
 $ownerCollection = OwnerCollection::make($ownerRepository->all());
 $petCollection = PetCollection::make($petRepository->all());
 
+$ownerCollection = new OwnerCollection();
 
+foreach (range(1, 5) as $i) {
+    $ownerCollection->add(\App\Owner\OwnerFactory::make());
+}
+
+var_dump($ownerCollection);
 
 $petDTO = new PetDTO(
     $ownerCollection[0]->id,

@@ -8,4 +8,6 @@ class OwnerRepository extends AbstractRepository
 {
     public $table = 'owner';
 
+    public $primaryKey = 'owner_id';
+
 }
