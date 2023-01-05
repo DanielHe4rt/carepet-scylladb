@@ -19,6 +19,7 @@
   "require": {
     "sunrise/http-router": "^2.15",
     "fakerphp/faker": "^1.20",
-    "ext-cassandra": "*"
+    "ext-cassandra": "*",
+    "vlucas/phpdotenv": "^5.5"
   }
 }

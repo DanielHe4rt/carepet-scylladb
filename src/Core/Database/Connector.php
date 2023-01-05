@@ -19,13 +19,18 @@ class Connector
     /** @var SimpleStatement */
     public $query;
 
-    public function __construct(array $config = ['nodes' => 'carepet-scylla1', 'keyspace' => 'carepet'])
+    public function __construct(array $config)
     {
         $this->cluster = Cassandra::cluster()
             ->withContactPoints($config['nodes'])
-            ->withPort(9042)
-            ->build();
+            ->withDefaultConsistency($config['consistency_level'])
+            ->withPort($config['port']);
 
+        if (!empty($config['username'] && !empty($config['password']))) {
+            $this->cluster = $this->cluster->withCredentials($config['username'], $config['password']);
+        }
+
+        $this->cluster = $this->cluster->build();
         $this->session = $this->cluster->connect($config['keyspace']);
     }
 

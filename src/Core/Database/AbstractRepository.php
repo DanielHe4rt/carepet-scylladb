@@ -21,7 +21,7 @@ abstract class AbstractRepository
 
     public function __construct()
     {
-        $this->connection = new Connector();
+        $this->connection = new Connector(config('database'));
     }
 
     public function getById(string $id): Rows

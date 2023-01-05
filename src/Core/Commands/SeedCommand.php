@@ -14,7 +14,7 @@ use App\Sensor\SensorRepository;
 class SeedCommand extends AbstractCommand
 {
 
-    const AMOUNT_BASE = 10000;
+    const AMOUNT_BASE = 50000;
 
     public function handle(array $args): int
     {
@@ -41,9 +41,8 @@ class SeedCommand extends AbstractCommand
                 $this->info(sprintf('Sensor: %s | Pet %s', $sensorDTO->id, $sensorDTO->petId));
             }
         }
+        $this->info('Done :D');
 
-        while (true) {
-            sleep(1);
-        }
+        return self::SUCCESS;
     }
 }
