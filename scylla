@@ -1,6 +1,8 @@
 <?php
 
+use App\Core\Commands\AbstractCommand;
 use App\Core\Commands\CommandException;
+use App\Core\Commands\MigrateCommand;
 use App\Core\Commands\ServeCommand;
 
 require_once 'vendor/autoload.php';
@@ -10,11 +12,13 @@ if(count($argv) <= 1) {
     return;
 }
 
-function getCommand($command): \App\Core\Commands\AbstractCommand
+function getCommand($command): AbstractCommand
 {
     switch($command) {
         case 'serve':
             return new ServeCommand();
+        case 'migrate':
+            return new MigrateCommand();
     }
 
     throw CommandException::notFound($command);
