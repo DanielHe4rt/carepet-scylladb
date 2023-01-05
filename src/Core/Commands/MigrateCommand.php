@@ -9,6 +9,8 @@ class MigrateCommand extends AbstractCommand
 
     public function handle(array $args): int
     {
+        $this->info('Fetching Migrations...');
+
         $config = ['nodes' => 'carepet-scylla1', 'keyspace' => ''];
         $connector = new Connector($config);
 
@@ -20,8 +22,10 @@ class MigrateCommand extends AbstractCommand
 
         foreach (glob(basePath('/migrations/*.cql')) as $migrationFile) {
             $connector->prepare(file_get_contents($migrationFile))->execute();
+            $this->info(sprintf('Migrated: %s', $migrationFile));
         }
 
+        $this->info('Done :D');
         return self::SUCCESS;
     }
 }
