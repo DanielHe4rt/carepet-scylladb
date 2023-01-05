@@ -9,7 +9,7 @@ abstract class AbstractDTO
     /** @var Uuid $id */
     public $id;
 
-    public abstract function make(array $payload): self;
+    public static abstract function make(array $payload);
 
     public abstract function toDatabase(): array;
 }

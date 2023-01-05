@@ -16,16 +16,16 @@ class OwnerDTO extends AbstractDTO
     /** @var string $address */
     public $address;
 
-    public function __construct(Uuid $id, string $name, string $address)
+    public function __construct(string $name, string $address, Uuid $id = null)
     {
         $this->id = $id;
         $this->name = $name;
         $this->address = $address;
     }
 
-    public function make(array $payload): AbstractDTO
+    public static function make(array $payload): self
     {
-        return new self($payload['owner_id'], $payload['name'], $payload['address']);
+        return new self($payload['name'], $payload['address'], $payload['owner_id']);
     }
 
     public function toDatabase(): array
