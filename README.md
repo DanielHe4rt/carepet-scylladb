@@ -11,6 +11,7 @@ Here you will find a list with possible drivers to integrate.
 
 The documentation for this application and guided exercise is [here](../docs).
 
+## Quick Start
 The application allows tracking of pets health indicators and consist in a CLI of three parts:
 
 | Command             | Description                                                |
@@ -19,10 +20,8 @@ The application allows tracking of pets health indicators and consist in a CLI o
 | php scylla simulate | generates a pet health data and pushes it into the storage |
 | php scylla serve    | REST API service for tracking pets health state            |
 
-## Quick Start
 
 Prerequisites:
-
 - [docker](https://www.docker.com/)
 - [docker-compose](https://docs.docker.com/compose/)
 
@@ -95,97 +94,120 @@ $ php scylla serve
 [Thu Jan  5 17:32:01 2023] PHP 7.4.33 Development Server (http://0.0.0.0:8000) started
 ````
 
-### ScyllaDB Commands
+#### ScyllaDB Commands
 
-To execute CQLSH:
-
-````shell
-$ docker exec -it carepet-scylla1 cqlsh
-````
-
-To execute nodetool:
-
+##### Running Nodetool:
 `````shell
 $ docker exec -it carepet-scylla1 nodetool status
+=======================
+Datacenter: datacenter1
+=======================
+Status=Up/Down
+|/ State=Normal/Leaving/Joining/Moving
+--  Address    Load       Tokens       Owns    Host ID                               Rack
+UN  10.10.5.2  212 KB     256          ?       f6121e15-48df-4b31-b725-3ad2795b8b94  rack1
+UN  10.10.5.3  1.06 MB    256          ?       871795f3-67d2-47ba-83ef-15714b89c02a  rack1
+UN  10.10.5.4  1.06 MB    256          ?       cbe74a63-2cf4-41c2-bf7f-c831c0d2689f  rack1
 `````
 
-Shell:
+##### Running Container Shell:
 
 ````shell
-$ docker exec -it carepet-scylla1 shell
-````
+$ docker exec -it carepet-scylla1 bash
 
-You can inspect any node by means of the `docker inspect` command as follows. For example:
+   _____            _ _       _____  ____
+  / ____|          | | |     |  __ \|  _ \
+ | (___   ___ _   _| | | __ _| |  | | |_) |
+  \___ \ / __| | | | | |/ _` | |  | |  _ <
+  ____) | (__| |_| | | | (_| | |__| | |_) |
+ |_____/ \___|\__, |_|_|\__,_|_____/|____/
+               __/ |
+              |___/
+Nodetool:
+        nodetool help
+CQL Shell:
+        cqlsh
+More documentation available at:
+        http://www.scylladb.com/doc/
+
+root@7e2b1b94389b:/#
+````
+##### Inspecting a Container
+_You can inspect any node by means of the `docker inspect` command as follows. For example:_
 
 ````shell
 $ docker inspect carepet-scylla1
+[
+    {
+        "Id": "7e2b1b94389b36c494093db8e119c2b8c5167339f20e03d9bfa070e8e46f8430",
+        "Created": "2023-01-05T17:36:59.038609825Z",
+        "Path": "/docker-entrypoint.py",
+        "Args": [
+            "--smp",
+            "1"
+        ],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false
+            ...
+        }
+    }
+]
 ````
 
-To get node IP address run:
-
+###### Get Node IP Address:
 ````shell
 $ docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' carepet-scylla1
+10.10.5.2
 ````
 
-
-You can check the database structure with:
+##### Entering CQLSH (Database)
 
 ````shell
 $ docker exec -it carepet-scylla1 cqlsh
+Connected to  at 10.10.5.2:9042.
+[cqlsh 5.0.1 | Cassandra 3.0.8 | CQL spec 3.3.1 | Native protocol v4]
+Use HELP for help.
+cqlsh>
 ````
 
 ````sql
-
-cqlsh
-> DESCRIBE KEYSPACES
+cqlsh> DESCRIBE KEYSPACES
 carepet  system_schema  system_auth  system  system_distributed  system_traces
+````
 
+````sql
 cqlsh> USE carepet;
-cqlsh
-:carepet> DESCRIBE TABLES
+cqlsh:carepet> DESCRIBE TABLES
 pet  sensor_avg  gocqlx_migrate  measurement  owner  sensor
-
+````
+````sql
 cqlsh:carepet> DESCRIBE TABLE pet
-CREATE TABLE carepet.pet
-(
-    owner_id uuid,
-    pet_id   uuid,
-    chip_id  text,
-    species  text,
-    breed    text,
-    color    text,
-    gender   text,
-    address  text,
-    age      int,
-    name     text,
-    weight   float,
-    PRIMARY KEY (owner_id, pet_id)
-) WITH CLUSTERING ORDER BY (pet_id ASC)
-    AND bloom_filter_fp_chance = 0.01
-    AND caching = {'keys': 'ALL', 'rows_per_partition': 'ALL'}
-    AND comment = ''
-    AND compaction = {'class': 'SizeTieredCompactionStrategy'}
-    AND compression = {'sstable_compression': 'org.apache.cassandra.io.compress.LZ4Compressor'}
-    AND crc_check_chance = 1.0
-    AND dclocal_read_repair_chance = 0.1
-    AND default_time_to_live = 0
-    AND gc_grace_seconds = 864000
-    AND max_index_interval = 2048
-    AND memtable_flush_period_in_ms = 0
-    AND min_index_interval = 128
-    AND read_repair_chance = 0.0
-    AND speculative_retry = '99.0PERCENTILE';
+CREATE TABLE carepet.owner (
+                               owner_id uuid PRIMARY KEY,
+                               address text,
+                               name text
+) WITH bloom_filter_fp_chance = 0.01
+      AND caching = {'keys': 'ALL', 'rows_per_partition': 'ALL'}
+      AND comment = ''
+      AND compaction = {'class': 'SizeTieredCompactionStrategy'}
+      AND compression = {'sstable_compression': 'org.apache.cassandra.io.compress.LZ4Compressor'}
+      AND crc_check_chance = 1.0
+      AND dclocal_read_repair_chance = 0.0
+      AND default_time_to_live = 0
+      AND gc_grace_seconds = 864000
+      AND max_index_interval = 2048
+      AND memtable_flush_period_in_ms = 0
+      AND min_index_interval = 128
+      AND read_repair_chance = 0.0
+      AND speculative_retry = '99.0PERCENTILE';
 
-cqlsh
-:carepet> exit
+cqlsh:carepet> exit
 ````
 
 To start pet collar simulation execute the following in the separate terminal:
-
-````shell
-$ NODE1=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' carepet-scylla1)
-$ npm run sensor -- --hosts $NODE1 --measure 5s --buffer-interval 1m
-````
 
 Expected output:
 
@@ -218,113 +240,14 @@ Expected output:
 [INFO] Development Server: http://0.0.0.0:8000 
 ````
 
-Now you can open `http://127.0.0.1:8000/` in the browser or send an HTTP request from the CLI:
-
-    $ curl -v http://127.0.0.1:8000/
-
-    > GET / HTTP/1.1
-    > Host: 127.0.0.1:8000
-    > User-Agent: curl/7.71.1
-    > Accept: */*
-    >
-    * Mark bundle as not supporting multiuse
-    < HTTP/1.1 404 Not Found
-    < Content-Type: application/json
-    < Date: Thu, 06 Aug 2020 14:47:41 GMT
-    < Content-Length: 45
-    < Connection: close
-    <
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>404 Not Found</title>
-    </head>
-    <body align="center">
-        <div role="main" align="center">
-            <h1>404: Not Found</h1>
-            <p>The requested resource could not be found.</p>
-            <hr />
-        </div>
-        <div role="contentinfo" align="center">
-            <small>Rocket</small>
-        </div>
-    </body>
-    * Connection #0 to host 127.0.0.1 left intact
-    </html>⏎
-
-This is ok. If you see this page in the end with 404, it means everything works as expected.
-To read an owner data you can use saved `owner_id` as follows:
-
-    $ curl http://127.0.0.1:8000/api/owner/{owner_id}
-
-For example:
-
-    $ curl http://127.0.0.1:8000/api/owner/a05fd0df-0f97-4eec-a211-cad28a6e5360
-
-Expected result:
-
-    {"address":"home","name":"gmwjgsap","owner_id":"a05fd0df-0f97-4eec-a211-cad28a6e5360"}
-
-To list the owners pets use:
-
-    $ curl http://127.0.0.1:8000/api/owner/{owner_id}/pets
-
-For example:
-
-    $ curl http://127.0.0.1:8000/api/owner/a05fd0df-0f97-4eec-a211-cad28a6e5360/pets
-
-Expected output:
-
-    [{"address":"home","age":57,"name":"tlmodylu","owner_id":"a05fd0df-0f97-4eec-a211-cad28a6e5360","pet_id":"a52adc4e-7cf4-47ca-b561-3ceec9382917","weight":5}]
-
-To list pet's sensors use:
-
-    $ curl http://127.0.0.1:8000/api/pet/{pet_id}/sensors
-
-For example:
-
-    $ curl http://127.0.0.1:8000/api/pet/cef72f58-fc78-4cae-92ae-fb3c3eed35c4/sensors
-
-    [{"pet_id":"cef72f58-fc78-4cae-92ae-fb3c3eed35c4","sensor_id":"5a9da084-ea49-4ab1-b2f8-d3e3d9715e7d","type":"L"},{"pet_id":"cef72f58-fc78-4cae-92ae-fb3c3eed35c4","sensor_id":"5c70cd8a-d9a6-416f-afd6-c99f90578d99","type":"R"},{"pet_id":"cef72f58-fc78-4cae-92ae-fb3c3eed35c4","sensor_id":"fbefa67a-ceb1-4dcc-bbf1-c90d71176857","type":"L"}]
-
-To review the pet's sensors data use:
-
-    $ curl http://127.0.0.1:8000/api/sensor/{sensor_id}/values?from=2006-01-02T15:04:05Z07:00&to=2006-01-02T15:04:05Z07:00
-
-For example:
-
-    $  curl http://127.0.0.1:8000/api/sensor/5a9da084-ea49-4ab1-b2f8-d3e3d9715e7d/values\?from\="2020-08-06T00:00:00Z"\&to\="2020-08-06T23:59:59Z"
-
-Expected output:
-
-    [51.360596,26.737432,77.88015,...]
-
-To read the pet's daily average per sensor use:
-
-    $ curl http://127.0.0.1:8000/api/sensor/{sensor_id}/values/day/{date}
-
-For example:
-
-    $ curl http://127.0.0.1:8000/api/sensor/5a9da084-ea49-4ab1-b2f8-d3e3d9715e7d/values/day/2020-08-06
-
-Expected output:
-
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,42.55736]
-
 ## Structure
 
 Package structure is as follows:
 
-| Name             | Purpose                                             |
-|------------------|-----------------------------------------------------|
-| /src/cmd         | sub applications                                    |
-| /src/cmd/migrate | install database schema                             |
-| /src/cmd/sensor  | simulate pet collar                                 |
-| /src             | web application backend and common application code |
-| /src/db.js       | database specific utilities                         |
-| /src/api         | web application handlers                            |
-| /src/mode.js     | application models                                  |
+| Name            | Purpose                                             |
+|-----------------|-----------------------------------------------------|
+| /src/Core       | Application Core (Connection, abstractions etc)     |
+| /src/Owner      | Owner Domain: DTO, Repository, Services             |
 
 ## Implementation
 
