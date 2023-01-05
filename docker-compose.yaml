@@ -13,6 +13,8 @@ services:
       - carepet-scylla1
       - carepet-scylla2
       - carepet-scylla3
+    networks:
+      - php
   carepet-scylla1:
     image: scylladb/scylla
     container_name: carepet-scylla1
@@ -22,6 +24,9 @@ services:
       - "SCYLLA_JMX_REMOTE=-r"
     expose:
       - "7199"
+    networks:
+      php:
+        ipv4_address: 10.10.5.2
   carepet-scylla2:
     image: scylladb/scylla
     container_name: carepet-scylla2
@@ -31,6 +36,9 @@ services:
       - "SCYLLA_JMX_REMOTE=-r"
     expose:
       - "7199"
+    networks:
+      php:
+        ipv4_address: 10.10.5.3
   carepet-scylla3:
     image: scylladb/scylla
     container_name: carepet-scylla3
@@ -40,3 +48,18 @@ services:
       - "SCYLLA_JMX_REMOTE=-r"
     expose:
       - "7199"
+    networks:
+      php:
+        ipv4_address: 10.10.5.4
+volumes:
+  laravel-cassandra-storage:
+networks:
+  php:
+    name: php
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.10.5.0/24
+          gateway: 10.10.5.1
+    driver_opts:
+      com.docker.network.bridge.name: php

@@ -20,9 +20,14 @@ class SeedCommand extends AbstractCommand
 
 
         for ($i = 0; $i <= self::AMOUNT_BASE; $i++) {
-            var_dump($ownerRepository->create(OwnerFactory::make()));
-//            $ownerDTO = OwnerDTO::make();
-//            $petRepository->create(PetFactory::make(['owner_id' => $ownerDTO->id]));
+            $ownerDTO = OwnerFactory::make();
+            $petDTO =  PetFactory::make(['owner_id' => $ownerDTO->id]);
+
+            $ownerRepository->create($ownerDTO);
+            $this->info(sprintf('Owner %s', $ownerDTO->id));
+
+            $petRepository->create($petDTO);
+            $this->info(sprintf('Pet: %s | Owner %s', $petDTO->id, $petDTO->ownerId));
         }
 
         while (true) {

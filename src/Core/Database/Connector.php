@@ -23,6 +23,7 @@ class Connector
     {
         $this->cluster = Cassandra::cluster()
             ->withContactPoints($config['nodes'])
+            ->withPort(9042)
             ->build();
 
         $this->session = $this->cluster->connect($config['keyspace']);
