@@ -19,16 +19,20 @@ class PetFactory extends AbstractFactory
             $faker->word(),
             $faker->randomElement(['male', 'female']),
             $faker->randomNumber(2),
-            (float) $faker->randomNumber(2),
+            (float)$faker->randomNumber(2),
             $faker->address(),
-            $faker->name(),
-            new Uuid($faker->uuid())
+            $faker->firstName(),
+            new Uuid($faker->uuid)
         );
     }
 
     public static function makeMany(int $amount, array $fields = []): PetCollection
     {
-        $collection = array_fill(0, $amount, self::make($fields));
+        $emptyCollection = array_fill(0, $amount, null);
+        $collection = array_map(function () use ($fields) {
+            return self::make($fields);
+        }, $emptyCollection);
+
         return new PetCollection($collection);
     }
 }

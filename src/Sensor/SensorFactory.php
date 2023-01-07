@@ -6,6 +6,7 @@ use App\Core\Entities\AbstractFactory;
 use App\Sensor\Type\TypeFactory;
 use Cassandra\Uuid;
 use Faker\Factory;
+use Faker\Generator;
 
 class SensorFactory extends AbstractFactory
 {
@@ -26,7 +27,10 @@ class SensorFactory extends AbstractFactory
 
     public static function makeMany(int $amount, array $fields = []): SensorCollection
     {
-        $collection = array_fill(0, $amount, self::make($fields));
+        $emptyCollection = array_fill(0, $amount, null);
+        $collection = array_map(function () use ($fields) {
+            return self::make($fields);
+        }, $emptyCollection);
         return new SensorCollection($collection);
     }
 

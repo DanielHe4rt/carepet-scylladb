@@ -8,14 +8,17 @@ use Cassandra\Rows;
 abstract class AbstractRepository
 {
 
+    /** @var string */
     public $table = '';
 
+    /** @var string */
     public $primaryKey = '';
 
-    /**
-     * @var Connector
-     */
+    /** @var Connector */
     public $connection;
+
+    /** @var array */
+    public $keys = [];
 
     public function __construct(Connector $connector)
     {
@@ -46,11 +49,11 @@ abstract class AbstractRepository
         $dataValues = array_values($dto->toDatabase());
 
         foreach ($dataValues as $key => $value) {
-            if (is_string($value)) {
+            if (is_string($value) && !in_array($keys[$key], $this->keys)) {
+                $value = addslashes($value);
                 $dataValues[$key] = "'$value'";
             }
         }
-        $dataValues[0] = str_replace("'", '', $dataValues[0]);
 
         $query = sprintf(
             "INSERT INTO %s (%s) VALUES (%s)",
@@ -60,8 +63,7 @@ abstract class AbstractRepository
         );
 
 
-        return (bool) $this->connection
-            ->prepare($query)
-            ->execute();
+        $this->connection->prepare($query)->execute()->get(5);
+        return true;
     }
 }

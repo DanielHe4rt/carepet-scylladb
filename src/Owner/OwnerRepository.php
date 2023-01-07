@@ -11,4 +11,9 @@ class OwnerRepository extends AbstractRepository
 
     /** @var string */
     public $primaryKey = 'owner_id';
+
+    /** @var array */
+    public $keys = [
+        'owner_id'
+    ];
 }

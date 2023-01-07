@@ -11,6 +11,11 @@ class PetRepository extends AbstractRepository
 
     public $primaryKey = 'pet_id';
 
+    public $keys = [
+        'pet_id',
+        'owner_id'
+    ];
+
     public function getByOwnerId(string $ownerId): Rows
     {
         $query = sprintf('SELECT * FROM %s where owner_id = %s', $this->table, $ownerId);

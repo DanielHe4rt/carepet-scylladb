@@ -2,8 +2,6 @@
 
 namespace App\Core\Entities;
 
-use App\Core\Interfaces\FactoryContract;
-
 abstract class AbstractFactory
 {
     public abstract static function make(array $fields = []);

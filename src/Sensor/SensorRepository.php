@@ -11,4 +11,10 @@ class SensorRepository extends AbstractRepository
 
     /** @var string */
     public $primaryKey = 'sensor_id';
+
+    /**@var array */
+    public $keys = [
+        'sensor_id',
+        'pet_id'
+    ];
 }

@@ -54,18 +54,16 @@ class SeedCommand extends AbstractCommand
 
             $this->ownerRepository->create($ownerDTO);
             $this->info(sprintf('Owner %s', $ownerDTO->id));
-            var_dump($petsDTO->getArrayCopy());
-            foreach ($petsDTO->getArrayCopy() as $petDTO) {
-                var_dump($petDTO);
+
+            $petsDTO->each(function ($petDTO) {
                 $this->info(sprintf('Pet: %s | Owner %s', $petDTO->id->uuid(), $petDTO->ownerId));
                 $this->petRepository->create($petDTO);
-                sleep(1);
-            }
+            });
 
-            foreach ($sensorDTOs as $sensorDTO) {
+            $sensorDTOs->each(function ($sensorDTO) {
                 $this->sensorRepository->create($sensorDTO);
                 $this->info(sprintf('Sensor: %s | Pet %s', $sensorDTO->id, $sensorDTO->petId));
-            }
+            });
         }
         $this->info('Done :D');
 
