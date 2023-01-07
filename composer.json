@@ -20,6 +20,10 @@
     "sunrise/http-router": "^2.15",
     "fakerphp/faker": "^1.20",
     "ext-cassandra": "*",
-    "vlucas/phpdotenv": "^5.5"
+    "vlucas/phpdotenv": "^5.5",
+    "sunrise/http-message": "^2.1",
+    "sunrise/http-server-request": "^2.2",
+    "nikic/fast-route": "^1.3",
+    "ext-json": "*"
   }
 }

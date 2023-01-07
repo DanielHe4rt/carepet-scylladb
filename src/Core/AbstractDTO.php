@@ -3,8 +3,9 @@
 namespace App\Core;
 
 use Cassandra\Uuid;
+use JsonSerializable;
 
-abstract class AbstractDTO
+abstract class AbstractDTO implements JsonSerializable
 {
     /** @var Uuid $id */
     public $id;
@@ -12,4 +13,9 @@ abstract class AbstractDTO
     public static abstract function make(array $payload);
 
     public abstract function toDatabase(): array;
+
+    public function jsonSerialize(): array
+    {
+        return $this->toDatabase();
+    }
 }

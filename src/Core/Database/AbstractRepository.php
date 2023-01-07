@@ -26,8 +26,10 @@ abstract class AbstractRepository
 
     public function getById(string $id): Rows
     {
+        $query = sprintf("SELECT * FROM %s WHERE %s = %s", $this->table, $this->primaryKey, $id);
+
         return $this->connection
-            ->prepare(sprintf('SELECT * FROM %s WHERE %s = %s', $this->table, $this->primaryKey, $id))
+            ->prepare($query)
             ->execute()
             ->get(5);
     }
@@ -50,11 +52,11 @@ abstract class AbstractRepository
                 $dataValues[$key] = "'$value'";
             }
         }
+        $dataValues[0] = str_replace("'", '', $dataValues[0]);
 
         $query = sprintf(
-            "INSERT INTO %s (%s, %s) VALUES (uuid(), %s)",
+            "INSERT INTO %s (%s) VALUES (%s)",
             $this->table,
-            $this->primaryKey,
             implode(', ', $keys),
             implode(', ', $dataValues)
         );

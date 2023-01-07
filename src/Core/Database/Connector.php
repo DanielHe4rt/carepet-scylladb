@@ -27,7 +27,6 @@ class Connector
         if (!empty($config['username'] && !empty($config['password']))) {
             $this->cluster = $this->cluster->withCredentials($config['username'], $config['password']);
         }
-
         $this->cluster = $this->cluster->build();
         $this->session = $this->cluster->connect($config['keyspace']);
     }

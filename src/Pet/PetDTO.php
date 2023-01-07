@@ -66,6 +66,7 @@ class PetDTO extends AbstractDTO
     public function toDatabase(): array
     {
         return [
+            'pet_id' => $this->id,
             'owner_id' => $this->ownerId,
             'chip_id' => $this->chipId,
             'species' => $this->species,
