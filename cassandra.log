@@ -108,3 +108,6 @@
 05-01-2023 19:48:59 UTC [ERROR] Unable to establish a control connection to host 3.218.48.231 because of the following error: Underlying connection error: Authentication required but no auth provider set (src/cluster_connector.cpp:238)
 05-01-2023 19:48:59 UTC [ERROR] Unable to establish a control connection to host 3.218.48.231 because of the following error: Underlying connection error: Authentication required but no auth provider set (src/cluster_connector.cpp:238)
 05-01-2023 19:48:59 UTC [ERROR] Unable to establish a control connection to host 3.218.48.231 because of the following error: Underlying connection error: Authentication required but no auth provider set (src/cluster_connector.cpp:238)
+07-01-2023 03:36:03 UTC [ERROR] Connection pool was unable to connect to host 10.10.5.4 because of the following error: Connect error 'connection refused' (src/connection_pool_connector.cpp:129)
+07-01-2023 03:52:23 UTC [ERROR] Connection pool was unable to connect to host 10.10.5.4 because of the following error: Connect error 'connection refused' (src/connection_pool_connector.cpp:129)
+07-01-2023 03:52:27 UTC [ERROR] Connection pool was unable to connect to host 10.10.5.4 because of the following error: Connect error 'connection refused' (src/connection_pool_connector.cpp:129)

@@ -3,6 +3,7 @@
 namespace App\Core\Commands;
 
 use App\Core\Commands\Base\AbstractCommand;
+use App\Core\Database\Connector;
 use App\Owner\OwnerDTO;
 use App\Owner\OwnerFactory;
 use App\Owner\OwnerRepository;
@@ -18,9 +19,11 @@ class SeedCommand extends AbstractCommand
 
     public function handle(array $args): int
     {
-        $ownerRepository = new OwnerRepository();
-        $petRepository = new PetRepository();
-        $sensorRepository = new SensorRepository();
+        $connection = new Connector(config('database'));
+
+        $ownerRepository = new OwnerRepository($connection);
+        $petRepository = new PetRepository($connection);
+        $sensorRepository = new SensorRepository($connection);
 
         foreach (range(0, self::AMOUNT_BASE) as $i) {
             $this->info("Batch: " . $i);

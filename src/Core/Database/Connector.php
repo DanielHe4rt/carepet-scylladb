@@ -9,9 +9,7 @@ use Cassandra\SimpleStatement;
 
 class Connector
 {
-    /**
-     * @var Session
-     */
+    /** @var \Cassandra\Cluster\Builder */
     public $cluster;
 
     public $session;
