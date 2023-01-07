@@ -3,6 +3,7 @@
 namespace App;
 
 
+use App\Core\Bootstrap;
 use App\Core\Database\Connector;
 use DI\Container;
 use DI\ContainerBuilder;
@@ -14,7 +15,7 @@ class Kernel
 {
     public function run()
     {
-        $container = $this->bootstrapApplication();
+        $container = (new Bootstrap())->init();
         $uri = $this->resolveRequestUri();
         $httpMethod = $this->resolveHttpMethod();
 
@@ -36,22 +37,7 @@ class Kernel
 
     }
 
-    public function bootstrapApplication(): Container
-    {
-        // Loading the environment variables
-        $dotenv = Dotenv::createImmutable(basePath());
-        $dotenv->load();
 
-        // Loading the base container
-        $container = new ContainerBuilder();
-        $container->addDefinitions([
-            Connector::class => function (ContainerInterface $c) {
-                return new Connector(config('database'));
-            },
-        ]);
-
-        return $container->build();
-    }
 
     public function resolveHttpMethod(): string
     {

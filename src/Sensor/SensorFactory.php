@@ -3,13 +3,16 @@
 namespace App\Sensor;
 
 use App\Core\Entities\AbstractFactory;
-use App\Pet\PetDTO;
 use App\Sensor\Type\TypeFactory;
 use Cassandra\Uuid;
 use Faker\Factory;
 
 class SensorFactory extends AbstractFactory
 {
+    public function __construct()
+    {
+    }
+
     public static function make(array $fields = []): SensorDTO
     {
         $faker = Factory::create();

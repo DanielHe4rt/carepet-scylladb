@@ -27,8 +27,8 @@ class SensorDTO extends AbstractDTO
     public function toDatabase(): array
     {
         return [
-            'sensor_id' => $this->id,
-            'pet_id' => $this->petId,
+            'sensor_id' => $this->id->uuid(),
+            'pet_id' => $this->petId->uuid(),
             'type' => $this->type->name
         ];
     }

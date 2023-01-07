@@ -15,34 +15,55 @@ use App\Sensor\SensorRepository;
 class SeedCommand extends AbstractCommand
 {
 
+    /**
+     * @var \App\Owner\OwnerRepository
+     */
+    private $ownerRepository;
+    /**
+     * @var \App\Pet\PetRepository
+     */
+    private $petRepository;
+    /**
+     * @var \App\Sensor\SensorRepository
+     */
+    private $sensorRepository;
+
+    public function __construct(
+        OwnerRepository  $ownerRepository,
+        PetRepository    $petRepository,
+        SensorRepository $sensorRepository
+    )
+    {
+        $this->ownerRepository = $ownerRepository;
+        $this->petRepository = $petRepository;
+        $this->sensorRepository = $sensorRepository;
+    }
+
     const AMOUNT_BASE = 50000;
 
-    public function handle(array $args): int
+    public function __invoke(array $args = []): int
     {
-        $connection = new Connector(config('database'));
-
-        $ownerRepository = new OwnerRepository($connection);
-        $petRepository = new PetRepository($connection);
-        $sensorRepository = new SensorRepository($connection);
-
         foreach (range(0, self::AMOUNT_BASE) as $i) {
             $this->info("Batch: " . $i);
             $ownerDTO = OwnerFactory::make();
-            $petDTO = PetFactory::make(['owner_id' => $ownerDTO->id]);
-            $petDTO = PetFactory::make(['owner_id' => $ownerDTO->id]);
+            $petsDTO = PetFactory::makeMany(5, ['owner_id' => $ownerDTO->id]);
             $sensorDTOs = SensorFactory::makeMany(5, [
-                'pet_id' => $petDTO->id,
-                'owner_id' => $petDTO->id
+                'pet_id' => $petsDTO[0]->id,
+                'owner_id' => $ownerDTO->id
             ]);
 
-            $ownerRepository->create($ownerDTO);
+            $this->ownerRepository->create($ownerDTO);
             $this->info(sprintf('Owner %s', $ownerDTO->id));
-
-            $petRepository->create($petDTO);
-            $this->info(sprintf('Pet: %s | Owner %s', $petDTO->id, $petDTO->ownerId));
+            var_dump($petsDTO->getArrayCopy());
+            foreach ($petsDTO->getArrayCopy() as $petDTO) {
+                var_dump($petDTO);
+                $this->info(sprintf('Pet: %s | Owner %s', $petDTO->id->uuid(), $petDTO->ownerId));
+                $this->petRepository->create($petDTO);
+                sleep(1);
+            }
 
             foreach ($sensorDTOs as $sensorDTO) {
-                $sensorRepository->create($sensorDTO);
+                $this->sensorRepository->create($sensorDTO);
                 $this->info(sprintf('Sensor: %s | Pet %s', $sensorDTO->id, $sensorDTO->petId));
             }
         }
