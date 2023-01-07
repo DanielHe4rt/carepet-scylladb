@@ -2,7 +2,7 @@
 
 namespace App\Owner;
 
-use App\Core\AbstractDTO;
+use App\Core\Entities\AbstractDTO;
 use Cassandra\Uuid;
 
 class OwnerDTO extends AbstractDTO

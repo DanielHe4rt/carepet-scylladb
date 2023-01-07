@@ -2,12 +2,13 @@
 
 namespace App\Sensor;
 
+use App\Core\Entities\AbstractFactory;
 use App\Pet\PetDTO;
 use App\Sensor\Type\TypeFactory;
 use Cassandra\Uuid;
 use Faker\Factory;
 
-class SensorFactory
+class SensorFactory extends AbstractFactory
 {
     public static function make(array $fields = []): SensorDTO
     {
@@ -22,12 +23,8 @@ class SensorFactory
 
     public static function makeMany(int $amount, array $fields = []): SensorCollection
     {
-        return new SensorCollection(array_fill(
-            0,
-            $amount,
-            self::make($fields)
-        ));
-
+        $collection = array_fill(0, $amount, self::make($fields));
+        return new SensorCollection($collection);
     }
 
 }

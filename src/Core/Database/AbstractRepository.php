@@ -2,9 +2,7 @@
 
 namespace App\Core\Database;
 
-use App\Core\AbstractDTO;
-use App\Owner\OwnerDTO;
-use Cassandra\FutureRows;
+use App\Core\Entities\AbstractDTO;
 use Cassandra\Rows;
 
 abstract class AbstractRepository

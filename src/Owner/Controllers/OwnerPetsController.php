@@ -2,17 +2,15 @@
 
 namespace App\Owner\Controllers;
 
-use App\Core\Database\Connector;
 use App\Core\Http\BaseController;
-use App\Owner\Actions\CreateOwner;
-use App\Owner\Actions\FindOwnerById;
+use App\Owner\Actions\GetOwnerPets;
 
-final class OwnerController extends BaseController
+class OwnerPetsController extends BaseController
 {
-
+    /**@var \App\Owner\Actions\GetOwnerPets */
     private $action;
 
-    public function __construct(FindOwnerById $action)
+    public function __construct(GetOwnerPets $action)
     {
         $this->action = $action;
     }

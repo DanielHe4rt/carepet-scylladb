@@ -2,10 +2,11 @@
 
 namespace App\Pet;
 
+use App\Core\Entities\AbstractFactory;
 use Cassandra\Uuid;
 use Faker\Factory;
 
-class PetFactory
+class PetFactory extends AbstractFactory
 {
     public static function make(array $fields = []): PetDTO
     {
@@ -23,5 +24,11 @@ class PetFactory
             $faker->name(),
             new Uuid($faker->uuid())
         );
+    }
+
+    public static function makeMany(int $amount, array $fields = []): PetCollection
+    {
+        $collection = array_fill(0, $amount, self::make($fields));
+        return new PetCollection($collection);
     }
 }

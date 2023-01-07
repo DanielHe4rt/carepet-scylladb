@@ -29,6 +29,7 @@ class SeedCommand extends AbstractCommand
             $this->info("Batch: " . $i);
             $ownerDTO = OwnerFactory::make();
             $petDTO = PetFactory::make(['owner_id' => $ownerDTO->id]);
+            $petDTO = PetFactory::make(['owner_id' => $ownerDTO->id]);
             $sensorDTOs = SensorFactory::makeMany(5, [
                 'pet_id' => $petDTO->id,
                 'owner_id' => $petDTO->id

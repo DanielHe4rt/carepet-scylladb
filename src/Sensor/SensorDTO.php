@@ -2,7 +2,7 @@
 
 namespace App\Sensor;
 
-use App\Core\AbstractDTO;
+use App\Core\Entities\AbstractDTO;
 use App\Sensor\Type\TypeDTO;
 use Cassandra\Uuid;
 
