@@ -60,10 +60,13 @@ class SeedCommand extends AbstractCommand
                 $this->petRepository->create($petDTO);
             });
 
-            $sensorDTOs->each(function ($sensorDTO) {
-                $this->sensorRepository->create($sensorDTO);
-                $this->info(sprintf('Sensor: %s | Pet %s', $sensorDTO->id, $sensorDTO->petId));
-            });
+            while(true) {
+                $sensorDTOs->each(function ($sensorDTO) {
+                    $this->sensorRepository->create($sensorDTO);
+                    $this->info(sprintf('Sensor: %s | Pet %s', $sensorDTO->id, $sensorDTO->petId));
+                    sleep(1);
+                });
+            }
         }
         $this->info('Done :D');
 

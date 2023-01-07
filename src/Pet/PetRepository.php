@@ -25,5 +25,4 @@ class PetRepository extends AbstractRepository
             ->execute()
             ->get(5);
     }
-
 }

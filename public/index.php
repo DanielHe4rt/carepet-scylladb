@@ -1,6 +1,6 @@
 <?php
 require '../vendor/autoload.php';
 
-use App\Kernel;
+use App\Core\Kernel;
 
 (new Kernel())->run();

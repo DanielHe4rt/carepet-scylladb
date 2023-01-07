@@ -1,15 +1,10 @@
 <?php
 
-namespace App;
+namespace App\Core;
 
 
-use App\Core\Bootstrap;
-use App\Core\Database\Connector;
-use DI\Container;
-use DI\ContainerBuilder;
-use Dotenv\Dotenv;
+use App\Router;
 use FastRoute\Dispatcher;
-use Psr\Container\ContainerInterface;
 
 class Kernel
 {
