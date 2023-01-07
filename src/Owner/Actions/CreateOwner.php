@@ -9,11 +9,21 @@ use App\Owner\OwnerRepository;
 
 class CreateOwner
 {
-    public static function handle(): OwnerDTO
+    /**
+     * @var \App\Owner\OwnerRepository
+     */
+    private $repository;
+
+    public function __construct(OwnerRepository $repository)
+    {
+        $this->repository = $repository;
+    }
+
+    public function handle(): OwnerDTO
     {
         $ownerDTO = OwnerFactory::make();
-        $repository = new OwnerRepository(new Connector(config('database')));
-        $repository->create($ownerDTO);
+        $this->repository->create($ownerDTO);
+
         return $ownerDTO;
     }
 }

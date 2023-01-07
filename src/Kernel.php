@@ -1,40 +1,24 @@
 <?php
+
 namespace App;
 
 
-use App\Owner\Controllers\OwnerController;
+use App\Core\Database\Connector;
+use DI\Container;
+use DI\ContainerBuilder;
 use Dotenv\Dotenv;
 use FastRoute\Dispatcher;
-use FastRoute\RouteCollector;
-use function FastRoute\simpleDispatcher;
+use Psr\Container\ContainerInterface;
 
 class Kernel
 {
     public function run()
     {
-        $dotenv = Dotenv::createImmutable(basePath());
-        $dotenv->load();
+        $container = $this->bootstrapApplication();
+        $uri = $this->resolveRequestUri();
+        $httpMethod = $this->resolveHttpMethod();
 
-        $dispatcher = simpleDispatcher(function(RouteCollector $router) {
-            $router->get('/owners/{ownerId}', [OwnerController::class, 'handle']);
-            $router->get('/owners/{id:\d+}/pets', [OwnerController::class, 'handle']);
-            $router->get('/pets/{id:\d+}/sensors', [OwnerController::class, 'handle']);
-            $router->get('/sensors/{id:\d+}', [OwnerController::class, 'handle']);
-            $router->get('/sensors/{id:\d+}/daily', [OwnerController::class, 'handle']);
-        });
-
-        // Fetch method and URI from somewhere
-        $httpMethod = $_SERVER['REQUEST_METHOD'];
-        $uri = $_SERVER['REQUEST_URI'];
-
-        // Strip query string (?foo=bar) and decode URI
-        if (false !== $pos = strpos($uri, '?')) {
-            $uri = substr($uri, 0, $pos);
-        }
-        $uri = rawurldecode($uri);
-
-        $routeInfo = $dispatcher->dispatch($httpMethod, $uri);
-
+        $routeInfo = Router::map()->dispatch($httpMethod, $uri);
         switch ($routeInfo[0]) {
             case Dispatcher::NOT_FOUND:
                 echo 'rota errada irmão';
@@ -46,9 +30,41 @@ class Kernel
             case Dispatcher::FOUND:
                 [$controller] = $routeInfo[1];
                 $params = $routeInfo[2];
-                (new $controller)(...(array_values($params)));
+                $container->call($controller,$params);
                 break;
         }
 
+    }
+
+    public function bootstrapApplication(): Container
+    {
+        // Loading the environment variables
+        $dotenv = Dotenv::createImmutable(basePath());
+        $dotenv->load();
+
+        // Loading the base container
+        $container = new ContainerBuilder();
+        $container->addDefinitions([
+            Connector::class => function (ContainerInterface $c) {
+                return new Connector(config('database'));
+            },
+        ]);
+
+        return $container->build();
+    }
+
+    public function resolveHttpMethod(): string
+    {
+        return $_SERVER['REQUEST_METHOD'];
+    }
+
+    public function resolveRequestUri(): string
+    {
+        $uri = $_SERVER['REQUEST_URI'];
+        if (false !== $pos = strpos($uri, '?')) {
+            $uri = substr($uri, 0, $pos);
+        }
+
+        return rawurldecode($uri);
     }
 }
